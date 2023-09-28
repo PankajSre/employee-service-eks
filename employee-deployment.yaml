@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee-app
+  template:
+    metadata:
+      labels:
+        app: employee-app
+    spec:
+      containers:
+        - name: employee-app
+          image: pankajsre/employee-service
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://database-2.cmdlxfdnrfju.ap-south-1.rds.amazonaws.com:5432/studentdb
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: POSTGRES_PASSWORD
